@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <title>Wallet Balance Checker</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 18px;
+            color: #555555;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wallet Balance Checker</h1>
+        <div class="form-group">
+            <label class="form-label" for="wallet-address">Enter your wallet address:</label>
+            <input class="form-input" type="text" id="wallet-address" placeholder="e.g., 0x1234567890abcdef">
+        </div>
+        <button class="form-button" onclick="checkBalance()">Check Balance</button>
+        <div id="balance-result"></div>
+    </div>
+
+    <script>
+        function checkBalance() {
+            var walletAddress = document.getElementById('wallet-address').value;
+
+            // Make the API request
+            var apiUrl = "https://api.cryptoapis.io/v1/blockchain-data/{blockchain}/{network}/addresses/{address}/balance";
+            var blockchain = "ethereum"; // Replace with the desired blockchain
+            var network = "testnet"; // Replace with the desired network
+
+            
+            apiUrl = apiUrl.replace("{blockchain}", blockchain)
+                           .replace("{network}", network)
+                           .replace("{address}", walletAddress);
+
+            // Make the HTTP GET request
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Extract the balance from the response
+                    var balance = data.data.item.confirmedBalance.amount;
+                    var unit = data.data.item.confirmedBalance.unit;
+
+                    // Display the balance
+                    document.getElementById('balance-result').innerHTML = "Balance: " + balance + " " + unit;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('balance-result').innerHTML = "Error retrieving balance.";
+                });
+        }
+    </script>
+</body>
+</html>
